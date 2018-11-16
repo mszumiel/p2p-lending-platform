@@ -1,0 +1,100 @@
+buildscript {
+    ext {
+        kotlinVersion = '1.2.61'
+        springBootVersion = '2.0.6.RELEASE'
+        springBootMyBatisVersion = '1.3.2'
+        hikariConnectionPoolVersion = '3.2.0'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}")
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-spring'
+apply plugin: 'kotlin-jpa'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'war'
+
+group = 'com.szumi.app'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = JavaVersion.VERSION_1_8
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    providedRuntime
+}
+
+ext {
+    springBootAdminVersion = '2.0.3'
+    springCloudVersion = 'Finchley.SR1'
+}
+
+dependencies {
+    /* Application Diagnostic */
+    implementation('org.springframework.boot:spring-boot-starter-actuator')
+
+    /* Database Integration Layer */
+    implementation('org.liquibase:liquibase-core')
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:${springBootMyBatisVersion}")
+    implementation("com.zaxxer:HikariCP:${hikariConnectionPoolVersion}")
+    implementation('org.postgresql:postgresql')
+    
+    /* Security Layer */
+    implementation('org.springframework.boot:spring-boot-starter-security')
+
+    /* Web Services Layer */
+    implementation('org.springframework.boot:spring-boot-starter-validation')
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-web-services')
+    implementation('org.springframework.boot:spring-boot-starter-websocket')
+
+    /* Other */
+    implementation('org.springframework.boot:spring-boot-starter-mail')
+    implementation('org.springframework.boot:spring-boot-starter-quartz')
+    implementation('org.springframework.boot:spring-boot-starter-cache')
+    implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
+    implementation('de.codecentric:spring-boot-admin-starter-client')
+    implementation('de.codecentric:spring-boot-admin-starter-server')
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    runtimeOnly('org.springframework.boot:spring-boot-devtools')
+    compileOnly('org.projectlombok:lombok')
+    
+    /* Tests */
+    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')
+    testImplementation('org.springframework.security:spring-security-test')
+    runtimeOnly('com.h2database:h2')
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "de.codecentric:spring-boot-admin-dependencies:${springBootAdminVersion}"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
